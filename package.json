@@ -1,0 +1,78 @@
+{
+  "name": "claude-commit-gen",
+  "displayName": "Claude Commit Gen",
+  "description": "Generate commit messages using Claude Code CLI",
+  "version": "0.1.0",
+  "publisher": "tiranspierer",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "SCM Providers"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeCommit.generate",
+        "title": "Generate Commit Message",
+        "icon": "$(sparkle)",
+        "category": "Claude Commit"
+      }
+    ],
+    "menus": {
+      "scm/inputBox": [
+        {
+          "command": "claudeCommit.generate",
+          "group": "navigation",
+          "when": "scmProvider == git"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "claudeCommit.generate",
+        "key": "ctrl+shift+alt+c",
+        "mac": "cmd+shift+alt+c",
+        "when": "scmProvider == git"
+      }
+    ],
+    "configuration": {
+      "title": "Claude Commit",
+      "properties": {
+        "claudeCommit.model": {
+          "type": "string",
+          "default": "haiku",
+          "markdownDescription": "Model passed directly to `claude --model`. Accepts aliases (`haiku`, `sonnet`, `opus`) or full IDs (`claude-haiku-4-5-20251001`)."
+        },
+        "claudeCommit.showRecentCommits": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include recent commit messages in the prompt so Claude matches your commit style."
+        },
+        "claudeCommit.allowFileContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Let Claude read surrounding code and docs for better context. When disabled, only the staged diff is visible."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "watch": "npm run compile -- --watch",
+    "package": "npm run compile -- --minify",
+    "vscode:prepublish": "npm run package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.5.0"
+  }
+}
