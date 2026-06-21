@@ -1,54 +1,69 @@
 import * as vscode from 'vscode';
-import { getRepository, getStagedDiff, getRecentLog } from './git';
+import { getRepository, getDiff, getRecentLog } from './git';
 import { runClaude, stripCodeFences } from './claude';
 import { getConfig } from './config';
 import { SYSTEM_PROMPT, buildInstruction, buildContext } from './prompts';
 
+let activeCts: vscode.CancellationTokenSource | undefined;
+
 export function activate(context: vscode.ExtensionContext): void {
-  const disposable = vscode.commands.registerCommand(
-    'claudeCommit.generate',
-    (arg?: unknown) => generateCommitMessage(extractRootUri(arg))
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'claudeCommitGen.generate',
+      (arg?: unknown) => generateCommitMessage(extractRootUri(arg))
+    ),
+    vscode.commands.registerCommand('claudeCommitGen.generateCancel', () => {
+      activeCts?.cancel();
+    }),
   );
-  context.subscriptions.push(disposable);
 }
 
 export function deactivate(): void {}
 
 async function generateCommitMessage(targetUri?: vscode.Uri): Promise<void> {
+  if (activeCts) return;
+
   const repo = await getRepository(targetUri);
   if (!repo) return;
 
   const config = getConfig();
-  const diff = await getStagedDiff(repo);
+  const diff = await getDiff(repo);
 
   if (!diff.trim()) {
-    vscode.window.showWarningMessage('No staged changes. Stage some changes first.');
+    vscode.window.showWarningMessage('No changes detected.');
     return;
   }
 
-  const log = config.showRecentCommits ? await getRecentLog(repo) : '';
-  const instruction = buildInstruction(config.allowFileContext);
-  const context = buildContext(diff, log);
+  const cts = new vscode.CancellationTokenSource();
+  activeCts = cts;
+  await vscode.commands.executeCommand('setContext', 'claudeCommitGen.generating', true);
 
-  const message = await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.Notification, title: 'Generating commit message…', cancellable: true },
-    (_progress, token) => runClaude(instruction, context, {
+  try {
+    const log = config.showRecentCommits ? await getRecentLog(repo) : '';
+    const instruction = buildInstruction(config.allowFileContext);
+    const ctx = buildContext(diff, log);
+
+    const message = await runClaude(instruction, ctx, {
       model: config.model,
       allowFileContext: config.allowFileContext,
       cwd: repo.rootUri.fsPath,
       systemPrompt: SYSTEM_PROMPT,
-    }, token)
-  );
+    }, cts.token);
 
-  if (!message) return;
+    if (!message || cts.token.isCancellationRequested) return;
 
-  const trimmed = stripCodeFences(message.trim());
-  if (!trimmed) {
-    vscode.window.showWarningMessage('Claude returned an empty response.');
-    return;
+    const trimmed = stripCodeFences(message.trim());
+    if (!trimmed) {
+      vscode.window.showWarningMessage('Claude returned an empty response.');
+      return;
+    }
+
+    repo.inputBox.value = trimmed;
+  } finally {
+    cts.dispose();
+    activeCts = undefined;
+    await vscode.commands.executeCommand('setContext', 'claudeCommitGen.generating', false);
   }
-
-  repo.inputBox.value = trimmed;
 }
 
 function extractRootUri(arg: unknown): vscode.Uri | undefined {

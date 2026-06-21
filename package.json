@@ -6,8 +6,12 @@
   "publisher": "tiranspierer",
   "license": "MIT",
   "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TiranSpierer/claude-commit-gen-vscode.git"
+  },
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.93.0"
   },
   "categories": [
     "SCM Providers"
@@ -19,24 +23,39 @@
   "contributes": {
     "commands": [
       {
-        "command": "claudeCommit.generate",
+        "command": "claudeCommitGen.generate",
         "title": "Generate Commit Message",
-        "icon": "$(sparkle)",
+        "icon": {
+          "light": "images/icon.png",
+          "dark": "images/icon.png"
+        },
         "category": "Claude Commit"
+      },
+      {
+        "command": "claudeCommitGen.generateCancel",
+        "title": "Generating…",
+        "icon": "$(loading~spin)",
+        "category": "Claude Commit",
+        "enablement": "false"
       }
     ],
     "menus": {
-      "scm/inputBox": [
+      "scm/title": [
         {
-          "command": "claudeCommit.generate",
+          "command": "claudeCommitGen.generate",
           "group": "navigation",
-          "when": "scmProvider == git"
+          "when": "scmProvider == git && !claudeCommitGen.generating"
+        },
+        {
+          "command": "claudeCommitGen.generateCancel",
+          "group": "navigation",
+          "when": "scmProvider == git && claudeCommitGen.generating"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "claudeCommit.generate",
+        "command": "claudeCommitGen.generate",
         "key": "ctrl+shift+alt+c",
         "mac": "cmd+shift+alt+c",
         "when": "scmProvider == git"
@@ -45,17 +64,17 @@
     "configuration": {
       "title": "Claude Commit",
       "properties": {
-        "claudeCommit.model": {
+        "claudeCommitGen.model": {
           "type": "string",
           "default": "haiku",
           "markdownDescription": "Model passed directly to `claude --model`. Accepts aliases (`haiku`, `sonnet`, `opus`) or full IDs (`claude-haiku-4-5-20251001`)."
         },
-        "claudeCommit.showRecentCommits": {
+        "claudeCommitGen.showRecentCommits": {
           "type": "boolean",
           "default": true,
           "description": "Include recent commit messages in the prompt so Claude matches your commit style."
         },
-        "claudeCommit.allowFileContext": {
+        "claudeCommitGen.allowFileContext": {
           "type": "boolean",
           "default": true,
           "description": "Let Claude read surrounding code and docs for better context. When disabled, only the staged diff is visible."
@@ -67,11 +86,14 @@
     "compile": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
     "watch": "npm run compile -- --watch",
     "package": "npm run compile -- --minify",
-    "vscode:prepublish": "npm run package"
+    "vscode:prepublish": "npm run package",
+    "vsix": "npm run package && npx @vscode/vsce package --allow-missing-repository",
+    "install:local": "npm run vsix && code --install-extension claude-commit-gen-0.1.0.vsix --force"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.93.0",
+    "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.21.0",
     "typescript": "^5.5.0"
   }

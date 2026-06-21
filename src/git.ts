@@ -54,13 +54,15 @@ export async function getRepository(targetUri?: vscode.Uri): Promise<Repository 
   return api.repositories[0];
 }
 
-export async function getStagedDiff(repo: Repository): Promise<string> {
+export async function getDiff(repo: Repository): Promise<string> {
   try {
     await repo.status();
   } catch {
     // non-fatal
   }
-  return repo.diff(true);
+  const staged = await repo.diff(true);
+  if (staged.trim()) return staged;
+  return repo.diff(false);
 }
 
 export async function getRecentLog(repo: Repository): Promise<string> {

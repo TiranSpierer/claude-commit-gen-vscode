@@ -1,4 +1,8 @@
 src/
+scripts/
+.build/
 tsconfig.json
 node_modules/
+package.dev.json
+*.vsix
 .gitignore

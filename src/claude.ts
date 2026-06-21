@@ -1,7 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
 import * as vscode from 'vscode';
 
-const TIMEOUT_MS = 120_000;
+const TIMEOUT_MS = 30_000;
 
 export function runClaude(
   instruction: string,
@@ -19,11 +19,12 @@ export function runClaude(
       '-p', instruction,
       '--model', options.model,
       '--no-session-persistence',
+      '--max-turns', '1',
       '--system-prompt', options.systemPrompt,
     ];
 
     if (!options.allowFileContext) {
-      args.push('--tools', '');
+      args.push('--allowedTools', '');
     }
 
     const child: ChildProcess = spawn('claude', args, {

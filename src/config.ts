@@ -7,7 +7,7 @@ export interface Config {
 }
 
 export function getConfig(): Config {
-  const cfg = vscode.workspace.getConfiguration('claudeCommit');
+  const cfg = vscode.workspace.getConfiguration('claudeCommitGen');
   return {
     model: cfg.get<string>('model', 'haiku'),
     showRecentCommits: cfg.get<boolean>('showRecentCommits', true),
