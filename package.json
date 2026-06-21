@@ -76,7 +76,7 @@
         },
         "claudeCommitGen.allowFileContext": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Let Claude read surrounding code and docs for better context. When disabled, only the staged diff is visible."
         }
       }

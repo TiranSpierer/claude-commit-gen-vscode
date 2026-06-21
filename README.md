@@ -30,7 +30,7 @@ code --install-extension claude-commit-gen-*.vsix
 |---------|------|---------|-------------|
 | `claudeCommitGen.model` | `string` | `"haiku"` | Passed directly to `claude --model`. Accepts aliases (`haiku`, `sonnet`, `opus`) or full model IDs (`claude-haiku-4-5-20251001`). |
 | `claudeCommitGen.showRecentCommits` | `boolean` | `true` | Include last 5 commit messages in the prompt so Claude matches your existing style. |
-| `claudeCommitGen.allowFileContext` | `boolean` | `true` | Let Claude read surrounding files for context. When `false`, passes `--tools ""` so only the staged diff is visible. |
+| `claudeCommitGen.allowFileContext` | `boolean` | `false` | Let Claude read surrounding files for context. When `false`, only the diff is visible (faster). |
 
 ## Privacy
 

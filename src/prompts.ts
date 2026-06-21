@@ -3,20 +3,16 @@ export const SYSTEM_PROMPT = [
   'Output ONLY the commit message text — nothing else.',
   '',
   'Rules:',
-  '- Use Conventional Commits format: type(scope): description',
-  '- Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert',
-  '- Scope is optional but encouraged when the change targets a specific module or component.',
+  '- Use Conventional Commits format.',
   '- Subject line: imperative mood, <=72 characters, no trailing period.',
-  '- Body (only if the change warrants explanation): blank line after subject, wrap at 72 columns, explain why not what.',
-  '- Match the commit style shown in RECENT COMMITS if provided.',
-  '- Never ask questions. Never add commentary, markdown, or code fences.',
-  '- Do not invent changes absent from the diff.',
+  '- Body only if the change warrants explanation.',
+  '- Match the style shown in RECENT COMMITS if provided.',
+  '- No commentary, no markdown fences, no questions.',
 ].join('\n');
 
 export function buildInstruction(allowFileContext: boolean): string {
   const parts = [
-    'Generate a commit message for the staged changes provided via stdin.',
-    'Output ONLY the commit message — no explanation, no markdown, no fences.',
+    'Generate a commit message for the changes provided via stdin.',
   ];
 
   if (allowFileContext) {

@@ -11,6 +11,6 @@ export function getConfig(): Config {
   return {
     model: cfg.get<string>('model', 'haiku'),
     showRecentCommits: cfg.get<boolean>('showRecentCommits', true),
-    allowFileContext: cfg.get<boolean>('allowFileContext', true),
+    allowFileContext: cfg.get<boolean>('allowFileContext', false),
   };
 }
