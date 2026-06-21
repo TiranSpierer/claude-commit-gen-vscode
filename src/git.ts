@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { execFile } from 'child_process';
 
 interface GitExtension {
   getAPI(version: 1): GitAPI;
@@ -62,7 +63,22 @@ export async function getDiff(repo: Repository): Promise<string> {
   }
   const staged = await repo.diff(true);
   if (staged.trim()) return staged;
-  return repo.diff(false);
+  const unstaged = await repo.diff(false);
+  if (unstaged.trim()) return unstaged;
+  const untracked = await getUntrackedDiff(repo.rootUri.fsPath);
+  return untracked;
+}
+
+function getUntrackedDiff(cwd: string): Promise<string> {
+  return new Promise((resolve) => {
+    execFile('git', ['ls-files', '--others', '--exclude-standard'], { cwd }, (err, stdout) => {
+      if (err || !stdout.trim()) { resolve(''); return; }
+      const files = stdout.trim().split('\n').slice(0, 20);
+      execFile('git', ['diff', '--no-index', '--', '/dev/null', ...files], { cwd, maxBuffer: 1024 * 512 }, (_err, diffOut) => {
+        resolve(diffOut || '');
+      });
+    });
+  });
 }
 
 export async function getRecentLog(repo: Repository): Promise<string> {

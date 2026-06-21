@@ -4,5 +4,6 @@ scripts/
 tsconfig.json
 node_modules/
 package.dev.json
+CLAUDE.md
 *.vsix
 .gitignore
