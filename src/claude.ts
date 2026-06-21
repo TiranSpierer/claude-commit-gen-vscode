@@ -90,8 +90,3 @@ export function runClaude(
     child.stdin?.end(context);
   });
 }
-
-export function stripCodeFences(text: string): string {
-  const match = text.match(/^```[^\n\r]*\r?\n([\s\S]*?)\r?\n```\s*$/);
-  return match ? match[1].trim() : text;
-}

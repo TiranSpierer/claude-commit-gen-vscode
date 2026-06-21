@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getRepository, getDiff, getRecentLog } from './git';
-import { runClaude, stripCodeFences } from './claude';
+import { runClaude } from './claude';
 import { getConfig } from './config';
 import { SYSTEM_PROMPT, buildInstruction, buildContext } from './prompts';
 
@@ -52,7 +52,7 @@ async function generateCommitMessage(targetUri?: vscode.Uri): Promise<void> {
 
     if (!message || cts.token.isCancellationRequested) return;
 
-    const trimmed = stripCodeFences(message.trim());
+    const trimmed = message.trim();
     if (!trimmed) {
       vscode.window.showWarningMessage('Claude returned an empty response.');
       return;
