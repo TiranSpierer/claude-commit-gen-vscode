@@ -64,20 +64,23 @@
     "configuration": {
       "title": "Claude Commit",
       "properties": {
-        "claudeCommitGen.model": {
-          "type": "string",
-          "default": "haiku",
-          "markdownDescription": "Model passed directly to `claude --model`. Accepts aliases (`haiku`, `sonnet`, `opus`) or full IDs (`claude-haiku-4-5-20251001`)."
-        },
         "claudeCommitGen.showRecentCommits": {
+          "order": 1,
           "type": "boolean",
           "default": true,
           "description": "Include recent commit messages in the prompt so Claude matches your commit style."
         },
         "claudeCommitGen.allowFileContext": {
+          "order": 2,
           "type": "boolean",
           "default": false,
           "description": "Let Claude read surrounding code and docs for better context. When disabled, only the staged diff is visible."
+        },
+        "claudeCommitGen.model": {
+          "order": 3,
+          "type": "string",
+          "default": "haiku",
+          "markdownDescription": "Alias (`haiku`, `sonnet`, `opus`) or full ID (`claude-haiku-4-5`, `claude-haiku-4-5-20251001`)."
         }
       }
     }

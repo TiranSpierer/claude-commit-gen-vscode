@@ -18,6 +18,7 @@ export function runClaude(
     const args = [
       '-p', instruction,
       '--model', options.model,
+      '--effort', 'low',
       '--no-session-persistence',
       '--max-turns', '1',
       '--system-prompt', options.systemPrompt,
@@ -69,7 +70,7 @@ export function runClaude(
       const stderr = Buffer.concat(stderrChunks).toString();
 
       if (code !== 0) {
-        const msg = stderr.trim() || `Process exited with code ${code}`;
+        const msg = stderr.trim() || stdout.trim() || `Process exited with code ${code}`;
         vscode.window.showErrorMessage(`Claude CLI failed: ${msg.slice(0, 500)}`);
         settle(undefined);
         return;
