@@ -9,13 +9,10 @@ VS Code extension that generates commit messages from your diff using the Claude
 
 ## Install
 
+Search **"Claude Commit Gen"** in the VS Code Extensions panel, or:
+
 ```sh
-# From source
-git clone https://github.com/tiranspierer/claude-commit-gen-vscode
-cd claude-commit-gen-vscode
-npm install
-npx @vscode/vsce package
-code --install-extension claude-commit-gen-*.vsix
+code --install-extension tiranspierer.claude-commit-gen
 ```
 
 ## Usage
@@ -26,15 +23,15 @@ code --install-extension claude-commit-gen-*.vsix
 
 ## Configuration
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
-| `claudeCommitGen.model` | `string` | `"haiku"` | Passed directly to `claude --model`. Accepts aliases (`haiku`, `sonnet`, `opus`) or full model IDs (`claude-haiku-4-5-20251001`). |
-| `claudeCommitGen.showRecentCommits` | `boolean` | `true` | Include last 5 commit messages in the prompt so Claude matches your existing style. |
-| `claudeCommitGen.allowFileContext` | `boolean` | `false` | Let Claude read surrounding files for context. When `false`, only the diff is visible (faster). |
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `claudeCommitGen.showRecentCommits` | `true` | Include last 5 commit messages so Claude matches your style. |
+| `claudeCommitGen.allowFileContext` | `false` | Let Claude read surrounding files for context. When disabled, only the diff is visible. |
+| `claudeCommitGen.model` | `"haiku"` | Alias (`haiku`, `sonnet`, `opus`) or full model ID (`claude-haiku-4-5`). |
 
 ## Privacy
 
-- This extension makes **zero network calls** of its own.
+- **Zero network calls** from the extension itself.
 - No telemetry, no analytics, no data collection.
 - The only process spawned is `claude` (your local CLI), which communicates with whatever backend you have configured (Anthropic API, Subscription, etc.).
 
