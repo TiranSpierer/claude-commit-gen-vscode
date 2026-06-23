@@ -47,8 +47,8 @@ The `.vscodeignore` excludes `src/`, `scripts/`, `tsconfig.json`, and dev files 
 
 ## Publishing to Marketplace
 
-1. Bump version in `package.json`
-2. Run `npm run vsix` → produces `claude-commit-gen-<version>.vsix`
+1. `npm run release -- patch` (or `minor`/`major`)
+2. `npm run vsix` → produces `claude-commit-gen-<version>.vsix`
 3. Go to https://marketplace.visualstudio.com/manage/publishers/tiranspierer
 4. Click the "..." menu on the extension → **Update** → upload the `.vsix` file
 5. Commit, tag, and push:
