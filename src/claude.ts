@@ -21,6 +21,7 @@ export function runClaude(
       '--effort', 'low',
       '--no-session-persistence',
       '--max-turns', '1',
+      '--bare',
       '--system-prompt', options.systemPrompt,
     ];
 
